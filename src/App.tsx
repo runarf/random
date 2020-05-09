@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "antd/dist/antd.css";
-import { Checkbox, Input, Button, Row, Layout } from "antd";
+import { Checkbox, Input, Button, Row, Layout, Card } from "antd";
 import { CheckboxValueType } from "antd/lib/checkbox/Group";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import Text from "antd/lib/typography/Text";
 import difference from "lodash/difference";
+import Title from "antd/lib/typography/Title";
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -80,13 +80,7 @@ const App = () => {
 
     const inputTextAllOptions = inputText.split(",").map((text) => text.trim());
 
-    const lengthAllOptions = allOptions.length;
     setAllOptions(inputTextAllOptions);
-    if (inputTextAllOptions.length > lengthAllOptions) {
-      const diffAllOptions = difference(allOptions, inputTextAllOptions);
-      const diffCheckedOptions = difference(diffAllOptions, currentlyChecked);
-      setCurrentlyChecked([...currentlyChecked, ...diffCheckedOptions]);
-    }
   };
 
   const onCheckMasterChange = (e: CheckboxChangeEvent) => {
@@ -116,33 +110,52 @@ const App = () => {
 
   const { Content } = Layout;
   return (
-    <Layout>
+    <Layout style={{ height: "100vh" }}>
       <Content>
-        <Row>
-          <Checkbox
-            indeterminate={state.indeterminate}
-            onChange={onCheckMasterChange}
-            checked={state.isAllChecked}
+        <Row justify="center">
+          <Card
+            title="Get a random person"
+            style={{ width: "80vw", margin: "12px" }}
           >
-            Check all
-          </Checkbox>
+            <Row justify="center">
+              <Checkbox
+                indeterminate={state.indeterminate}
+                onChange={onCheckMasterChange}
+                checked={state.isAllChecked}
+              >
+                Check all
+              </Checkbox>
+            </Row>
+            <Row justify="center">
+              <CheckboxGroup
+                options={allOptions}
+                value={currentlyChecked}
+                onChange={onClickCheckbox}
+              />
+            </Row>
+            <Row>
+              <Input
+                placeholder="Input comma separated list of people"
+                onChange={onChangeInput}
+                value={inputText}
+                onPressEnter={() => setInputText(inputText + ", ")}
+              />
+            </Row>
+            <br />
+            <Row justify="center">
+              <Button
+                disabled={allOptions.length < 2 && currentlyChecked.length < 2}
+                onClick={onClickButton}
+              >
+                Get Random
+              </Button>
+            </Row>
+            <br />
+            <Row justify="center">
+              <Title>{randomPerson}</Title>
+            </Row>
+          </Card>
         </Row>
-        <Row>
-          <CheckboxGroup
-            options={allOptions}
-            value={currentlyChecked}
-            onChange={onClickCheckbox}
-          />
-        </Row>
-        <Input
-          placeholder="Basic usage"
-          onChange={onChangeInput}
-          value={inputText}
-          onPressEnter={() => setInputText(inputText + ", ")}
-        />
-        <Button onClick={onClickButton}>Get Random</Button>
-
-        <Text>{randomPerson}</Text>
       </Content>
     </Layout>
   );
