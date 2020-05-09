@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import "antd/dist/antd.css";
-import { Checkbox, Input } from "antd";
+import { Checkbox, Input, Button } from "antd";
 import { CheckboxValueType } from "antd/lib/checkbox/Group";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import Text from "antd/lib/typography/Text";
 
 const CheckboxGroup = Checkbox.Group;
-
-const defaultCheckedList: CheckboxValueType[] = ["Apple", "Orange"];
 
 interface State {
   indeterminate: boolean;
@@ -15,7 +14,9 @@ interface State {
 
 const App = () => {
   const [allOptions, setAllOptions] = useState(["Apple", "Pear", "Orange"]);
-  const [currentlyChecked, setCurrentlyChecked] = useState(defaultCheckedList);
+  const [currentlyChecked, setCurrentlyChecked] = useState<CheckboxValueType[]>(
+    ["Apple", "Orange"]
+  );
   const [state, setState] = useState<State>({
     indeterminate: true,
     isAllChecked: false,
@@ -23,8 +24,9 @@ const App = () => {
 
   const [inputText, setInputText] = useState("");
 
+  const [randomPerson, setRandomPerson] = useState("");
+
   const onChange = (checkedValues: CheckboxValueType[]) => {
-    //{ length: number }) => {
     const indeterminate =
       checkedValues.length > 0 && checkedValues.length < allOptions.length;
     setState({
@@ -50,9 +52,17 @@ const App = () => {
     setCurrentlyChecked(isAllChecked ? allOptions : []);
   };
 
+  const getRandomElement = (array: CheckboxValueType[]) =>
+    array[Math.floor(Math.random() * array.length)];
+
+  const onClickButton = () => {
+    const randomPerson = getRandomElement(currentlyChecked) as string;
+    setRandomPerson(randomPerson);
+  };
+
   return (
     <div>
-      <div className="site-checkbox-all-wrapper">
+      <div>
         <Checkbox
           indeterminate={state.indeterminate}
           onChange={onCheckMasterChange}
@@ -71,7 +81,10 @@ const App = () => {
         placeholder="Basic usage"
         onPressEnter={onPressEnter}
         onChange={(e) => setInputText(e.target.value)}
+        value={inputText}
       />
+      <Button onClick={onClickButton}>Get Random</Button>
+      <Text>{randomPerson}</Text>
     </div>
   );
 };
