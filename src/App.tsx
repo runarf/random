@@ -1,42 +1,53 @@
 import React, { useState } from "react";
 import "antd/dist/antd.css";
-import { Checkbox } from "antd";
+import { Checkbox, Input } from "antd";
+import { CheckboxValueType } from "antd/lib/checkbox/Group";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
 
 const CheckboxGroup = Checkbox.Group;
 
-const plainOptions = ["Apple", "Pear", "Orange"];
-const defaultCheckedList = ["Apple", "Orange"];
+const defaultCheckedList: CheckboxValueType[] = ["Apple", "Orange"];
 
 interface State {
-  checkedList: string[];
   indeterminate: boolean;
-  checkAll: boolean;
+  isAllChecked: boolean;
 }
 
 const App = () => {
+  const [allOptions, setAllOptions] = useState(["Apple", "Pear", "Orange"]);
+  const [currentlyChecked, setCurrentlyChecked] = useState(defaultCheckedList);
   const [state, setState] = useState<State>({
-    checkedList: defaultCheckedList,
     indeterminate: true,
-    checkAll: false,
+    isAllChecked: false,
   });
 
-  const onChange = (checkedList: any) => {
+  const [inputText, setInputText] = useState("");
+
+  const onChange = (checkedValues: CheckboxValueType[]) => {
     //{ length: number }) => {
     const indeterminate =
-      !!checkedList.length && checkedList.length < plainOptions.length;
+      checkedValues.length > 0 && checkedValues.length < allOptions.length;
     setState({
-      checkedList,
       indeterminate,
-      checkAll: checkedList.length === plainOptions.length,
+      isAllChecked: checkedValues.length === allOptions.length,
     });
+    setCurrentlyChecked(checkedValues);
   };
 
-  const onCheckAllChange = (e: { target: { checked: any } }) => {
+  const onPressEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const newChecked = inputText.split(",").map((text) => text.trim());
+    setAllOptions([...allOptions, ...newChecked]);
+    setCurrentlyChecked([...currentlyChecked, ...newChecked]);
+    setInputText("");
+  };
+
+  const onCheckMasterChange = (e: CheckboxChangeEvent) => {
+    const isAllChecked = e.target.checked;
     setState({
-      checkedList: e.target.checked ? plainOptions : [],
       indeterminate: false,
-      checkAll: e.target.checked,
+      isAllChecked: isAllChecked,
     });
+    setCurrentlyChecked(isAllChecked ? allOptions : []);
   };
 
   return (
@@ -44,17 +55,22 @@ const App = () => {
       <div className="site-checkbox-all-wrapper">
         <Checkbox
           indeterminate={state.indeterminate}
-          onChange={onCheckAllChange}
-          checked={state.checkAll}
+          onChange={onCheckMasterChange}
+          checked={state.isAllChecked}
         >
           Check all
         </Checkbox>
       </div>
       <br />
       <CheckboxGroup
-        options={plainOptions}
-        value={state.checkedList}
+        options={allOptions}
+        value={currentlyChecked}
         onChange={onChange}
+      />
+      <Input
+        placeholder="Basic usage"
+        onPressEnter={onPressEnter}
+        onChange={(e) => setInputText(e.target.value)}
       />
     </div>
   );
