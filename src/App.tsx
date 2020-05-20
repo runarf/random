@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "antd/dist/antd.css";
-import { Checkbox, Input, Button, Row, Layout, Card } from "antd";
+import { Checkbox, Input, Button, Row, Layout, Card, Col } from "antd";
 import { CheckboxValueType } from "antd/lib/checkbox/Group";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import difference from "lodash/difference";
 import Title from "antd/lib/typography/Title";
+import { GithubOutlined } from "@ant-design/icons";
 
 const CheckboxGroup = Checkbox.Group;
 
@@ -114,7 +115,16 @@ const App = () => {
       <Content>
         <Row justify="center">
           <Card
-            title="Get a random person"
+            title={
+              <Row justify="space-between">
+                <Col>Get a random person</Col>
+                <Col>
+                  <a href="https://github.com/runarf/random/blob/master/src/App.tsx#L106">
+                    <GithubOutlined />
+                  </a>
+                </Col>
+              </Row>
+            }
             style={{ width: "80vw", margin: "12px" }}
           >
             <Row justify="center">
